@@ -1,12 +1,13 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { OpenAI } = require('openai');
 
-// 1. Conectar a Gemini (Reemplaza "TU_API_KEY_AQUI" con la clave de AI Studio)
-const genAI = new GoogleGenerativeAI("AQ.Ab8RN6IoQw_Ty40IbSQMwKUgwzamqpGgDgBL6FTLftt--Hbwrg"); 
-const ia = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+// Inicializar Groq usando el cliente compatible de OpenAI y la API key proporcionada
+const groq = new OpenAI({
+    apiKey: "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",
+    baseURL: 'https://api.groq.com/openai/v1'
+});
 
-// 2. Configuración obligatoria para servidores en la nube (Render)
+// 2. Configuración obligatoria para servidores en la nube (Render / Railway)
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
@@ -74,7 +75,7 @@ client.on('message', async (msg) => {
         }
 
         try {
-            console.log('Enviando a Gemini en la nube...');
+            console.log('Enviando a Groq en la nube...');
             
             const contextoNegocio = `Eres el asistente virtual de ventas de Cables Mendoza especializada en venta de cables y materiales para instalaciones eléctricas domiciliarias. 
             Tu objetivo es atender a los clientes de forma amable, profesional y concisa.
@@ -112,16 +113,22 @@ client.on('message', async (msg) => {
             JABALINAS: 3/8x1 metro $9000 | 3/8x1,5 metros $12000 | 1/2x1 metro $13000 | 1/2x1,5 metros $18000
             OTROS: Zapatilla 5 metros $11000 | Cinta 20m $2000 | Buscapolo SICA $3000`;
             
-            const promptFinal = contextoNegocio + "\n\nCliente dice: " + msg.body;
-            
-            const result = await ia.generateContent(promptFinal);
-            const respuesta = result.response.text();
+            const completion = await groq.chat.completions.create({
+                model: "llama-3.3-70b-versatile",
+                messages: [
+                    { role: "system", content: contextoNegocio },
+                    { role: "user", content: msg.body }
+                ],
+                temperature: 0.7,
+            });
+
+            const respuesta = completion.choices[0].message.content;
             
             console.log('Respuesta generada, enviando a WhatsApp...');
             msg.reply(respuesta);
             
         } catch (error) {
-            console.error('Error con IA:', error);
+            console.error('Error con Groq:', error);
         }
     } else {
         console.log('Mensaje ignorado: No es un chat privado normal (@c.us o @lid)');
