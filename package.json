@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+  "scripts": {
+  "build": "npx puppeteer browsers install chrome",
   "start": "node bot.js"
 },
   "keywords": [],
