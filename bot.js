@@ -4,7 +4,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // 1. Conectar a Gemini (Reemplaza "TU_API_KEY_AQUI" con la clave de AI Studio)
 const genAI = new GoogleGenerativeAI("AQ.Ab8RN6IoQw_Ty40IbSQMwKUgwzamqpGgDgBL6FTLftt--Hbwrg"); 
-const ia = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+const ia = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
 
 // 2. Configuración obligatoria para servidores en la nube (Render)
 const client = new Client({
