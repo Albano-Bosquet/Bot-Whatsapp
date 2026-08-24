@@ -114,7 +114,7 @@ client.on('message', async (msg) => {
             OTROS: Zapatilla 5 metros $11000 | Cinta 20m $2000 | Buscapolo SICA $3000`;
             
             const completion = await groq.chat.completions.create({
-                model: "llama-3.1-70b-versatile",
+                model: "openai/gpt-oss-120b",
                 messages: [
                     { role: "system", content: contextoNegocio },
                     { role: "user", content: msg.body }
